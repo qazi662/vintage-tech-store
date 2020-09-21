@@ -1,5 +1,7 @@
 // cart context
 import React from "react";
+import reducer from "./reducer";
+import { REMOVE, INCREASE, DECREASE, ADDTOCART, CLEARCART } from "./actions";
 
 function getCartFromLocalStorage() {
   return localStorage.getItem("cart")
@@ -10,7 +12,7 @@ function getCartFromLocalStorage() {
 export const CartContext = React.createContext();
 
 export default function CartProvider({ children }) {
-  const [cart, setCart] = React.useState(getCartFromLocalStorage());
+  const [cart, dispatch] = React.useReducer(reducer, getCartFromLocalStorage());
   const [total, setTotal] = React.useState(0);
   const [cartItems, setCartItems] = React.useState(0);
 
@@ -30,54 +32,65 @@ export default function CartProvider({ children }) {
   }, [cart]);
 
   const removeItem = (id) => {
+    dispatch({ type: REMOVE, payload: id });
     // setCart(...cart.filter((item) => item.id !== id));
-    let newCart = [...cart].filter((item) => item.id !== id);
-    setCart(newCart);
+    // let newCart = [...cart].filter((item) => item.id !== id);
+    // setCart(newCart);
   };
   const increaseAmount = (id, amount) => {
     if (amount === 10) {
-      setCart([...cart]);
+      dispatch({ type: "DEFAULT" });
     } else {
-      const newCart = [...cart].map((item) => {
-        return item.id === id
-          ? { ...item, amount: item.amount + 1 }
-          : { ...item };
-      });
-      setCart(newCart);
+      dispatch({ type: INCREASE, payload: id });
+      //   const newCart = [...cart].map((item) => {
+      //     return item.id === id
+      //       ? { ...item, amount: item.amount + 1 }
+      //       : { ...item };
+      //   });
+      //   setCart(newCart);
     }
   };
   const decreaseAmount = (id, amount) => {
     if (amount === 1) {
-      removeItem(id);
+      //   removeItem(id);
+      dispatch({ type: REMOVE, payload: id });
     } else {
-      let newCart = [...cart].map((item) => {
-        return item.id === id
-          ? { ...item, amount: item.amount - 1 }
-          : { ...item };
-      });
-      setCart(newCart);
+      dispatch({ type: DECREASE, payload: id });
+      //   let newCart = [...cart].map((item) => {
+      //     return item.id === id
+      //       ? { ...item, amount: item.amount - 1 }
+      //       : { ...item };
+      //   });
+      //   setCart(newCart);
     }
   };
   const addToCart = (product) => {
-    const {
-      id,
-      price,
-      image: { url },
-      title,
-    } = product;
-    const item = [...cart].find((item) => item.id === id);
+    let item = [...cart].find((item) => item.id === product.id);
     if (item) {
-      console.log(item);
-      increaseAmount(id, item.amount);
-      return;
+      dispatch({ type: INCREASE, payload: product.id });
     } else {
-      const newItem = { id, image: url, title, price, amount: 1 };
-      const newCart = [...cart, newItem];
-      setCart(newCart);
+      dispatch({ type: ADDTOCART, payload: product });
     }
+    // const {
+    //   id,
+    //   price,
+    //   image: { url },
+    //   title,
+    // } = product;
+    // const item = [...cart].find((item) => item.id === id);
+    // if (item) {
+    //   console.log(item);
+    //   increaseAmount(id, item.amount);
+    //   return;
+    // } else {
+    //   const newItem = { id, image: url, title, price, amount: 1 };
+    //   const newCart = [...cart, newItem];
+    //   setCart(newCart);
+    // }
   };
   const clearCart = () => {
-    setCart([]);
+    dispatch({ type: CLEARCART });
+    // setCart([]);
   };
 
   return (

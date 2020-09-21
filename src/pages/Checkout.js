@@ -38,7 +38,7 @@ function Checkout(props) {
         userToken: user.token,
       });
       if (order) {
-        showAlert({ msg: "your order os completed" });
+        showAlert({ msg: "your order is completed" });
         clearCart();
         history.push("/");
         return;

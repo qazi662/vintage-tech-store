@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import PrivateRoute from "./components/PrivateRoute";
+import ScrollButton from "./components/ScrollButton";
 
 import Header from "./components/Header";
 import Alert from "./components/Alert";
@@ -18,6 +19,7 @@ export default function App() {
     <Router>
       <Header />
       <Alert />
+      <ScrollButton />
       <Switch>
         <Route exact path="/">
           <Home />
